@@ -21,7 +21,7 @@ tags:
 compatibility:
   # List of compatible versions
   octoprint:
-  - 1.2.0
+  - 1.3.0
 
   # List of compatible operating systems
   os:
@@ -31,7 +31,7 @@ compatibility:
   - freebsd
 
   # Compatible Python version
-  python: ">=2.7,<3"
+  python: ">=3.7,<4"
 ---
 
 # Activate Prusa HostTimer
@@ -39,7 +39,9 @@ compatibility:
 Plugin for Octoprint to activate Prusa host features.
 
 Features:
-- Sends M79 S"OP" to printer every 10 seconds
+- Sends M79 S"OP" to printer every x seconds
+- Interval is configurable (5,10,15,20 or 25 seconds)
+- Interval can be paused
 
 ## Setup
 

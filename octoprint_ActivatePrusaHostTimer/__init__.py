@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import absolute_import
-
 import octoprint.plugin
 
 class ActivatePrusaHostTimerPlugin(
@@ -9,26 +7,19 @@ class ActivatePrusaHostTimerPlugin(
 	octoprint.plugin.TemplatePlugin
 	):
 
-	##~~ SettingsPlugin mixin
-
 	def get_settings_defaults(self):
-		return dict(
-			# put your plugin's default settings here
-		)
-
-	##~~ AssetPlugin mixin
+		return {
+			"interval":10000,
+			"paused":0
+		}
 
 	def get_assets(self):
-		# Define your plugin's asset files to automatically include in the
-		# core UI here.
-		return dict(js=["js/ActivatePrusaHostTimer.js"])
-
-	##~~ Softwareupdate hook
-
+		return dict(
+			js=["js/ActivatePrusaHostTimer.js"],
+			css=["css/ActivatePrusaHostTimer.css"]
+		)
+	
 	def get_update_information(self):
-		# Define the configuration for your plugin to use with the Software Update
-		# Plugin here. See https://github.com/foosel/OctoPrint/wiki/Plugin:-Software-Update
-		# for details.
 		return dict(
 			ActivatePrusaHostTimer=dict(
 				displayName="Activate Prusa HostTimer Plugin",
@@ -46,11 +37,8 @@ class ActivatePrusaHostTimerPlugin(
 		)
 
 
-# If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
-# ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
-# can be overwritten via __plugin_xyz__ control properties. See the documentation for that.
 __plugin_name__ = "Activate Prusa HostTimer Plugin"
-__plugin_pythoncompat__ = ">=2.7,<4"
+__plugin_pythoncompat__ = ">=3.7,<4"
 
 def __plugin_load__():
 	global __plugin_implementation__
@@ -60,4 +48,3 @@ def __plugin_load__():
 	__plugin_hooks__ = {
 		"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
 	}
-
