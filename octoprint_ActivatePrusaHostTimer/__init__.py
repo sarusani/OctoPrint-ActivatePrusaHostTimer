@@ -9,7 +9,7 @@ class ActivatePrusaHostTimerPlugin(
 
 	def get_settings_defaults(self):
 		return {
-			"interval":10000,
+			"interval":20000,
 			"paused":0
 		}
 
