@@ -24,6 +24,7 @@
                     <input type="checkbox" id="{{ macros.id("paused") }}" data-bind="checked: {{ macros.settings_binding("paused") }}">
                     <span class="slider round"></span>
                 </label>
+                <em class="help-block" data-bind="visible: {{ macros.settings_binding("paused") }}() == '1'">Ping is currently paused</em>
             </div>
         </div>
     </div>
