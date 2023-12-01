@@ -8,6 +8,8 @@ $(function() {
     function ActivatePrusaHostTimerViewModel() {
         var self = this;
         self.commandString = 'M79 S"OP"'
+        
+        OctoPrint.control.sendGcode(self.commandString);
 
         var intervalId = window.setInterval(function(){
             OctoPrint.control.sendGcode(self.commandString);
