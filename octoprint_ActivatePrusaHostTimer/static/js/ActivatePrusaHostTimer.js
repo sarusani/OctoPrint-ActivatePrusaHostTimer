@@ -1,11 +1,11 @@
 /*
- * View model for OctoPrint-ActivatePrusaHostTimer
+ * Activate Prusa HostTimer
  *
  * Author: sarusani
  * License: AGPLv3
  */
 $(function() {
-    function ActivatePrusaHostTimerViewModel() {
+    function ActivatePrusaHostTimer() {
         var self = this;
         self.commandString = 'M79 S"OP"'
         
@@ -16,5 +16,5 @@ $(function() {
         }, 10000);
     }
 
-    ActivatePrusaHostTimerViewModel()
+    ActivatePrusaHostTimer()
 });

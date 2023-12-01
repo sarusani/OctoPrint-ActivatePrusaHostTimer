@@ -1,4 +1,4 @@
-# OctoPrint-ActivatePrusaHostTimer
+# Activate PrusaHost Timer
 
 Plugin for Octoprint to activate Prusa host features.
 
