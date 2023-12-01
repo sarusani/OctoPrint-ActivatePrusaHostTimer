@@ -22,7 +22,7 @@ class ActivatePrusaHostTimerPlugin(
 	def get_update_information(self):
 		return dict(
 			ActivatePrusaHostTimer=dict(
-				displayName="Activate Prusa HostTimer Plugin",
+				displayName="Activate Prusa HostTimer",
 				displayVersion=self._plugin_version,
 
 				# version check: github repository
@@ -37,7 +37,7 @@ class ActivatePrusaHostTimerPlugin(
 		)
 
 
-__plugin_name__ = "Activate Prusa HostTimer Plugin"
+__plugin_name__ = "Activate Prusa HostTimer"
 __plugin_pythoncompat__ = ">=3.7,<4"
 
 def __plugin_load__():
