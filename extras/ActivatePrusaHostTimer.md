@@ -2,7 +2,7 @@
 layout: plugin
 
 id: ActivatePrusaHostTimer
-title: OctoPrint-ActivatePrusaHostTimer
+title: Activate Prusa HostTimer
 description: Plugin for Octoprint to activate Prusa host features
 author: sarusani
 license: AGPLv3
@@ -19,18 +19,22 @@ tags:
 - prusa
 
 compatibility:
-  # list of compatible versions, for example 1.2.0. If left empty no specific version requirement will be assumed
+  # List of compatible versions
   octoprint:
   - 1.2.0
 
-  # list of compatible operating systems, valid values are linux, windows, macos, leaving empty defaults to all
+  # List of compatible operating systems
   os:
   - linux
   - windows
   - macos
+  - freebsd
+
+  # Compatible Python version
+  python: ">=2.7,<3"
 ---
 
-# OctoPrint-ActivatePrusaHostTimer
+# Activate Prusa HostTimer
 
 Plugin for Octoprint to activate Prusa host features.
 
