@@ -4,7 +4,7 @@
     <h5>{{ _('Activate Prusa HostTimer') }}</h5>
     <div class="form-horizontal">
         <div class="control-group">
-            <label class="control-label" for="{{ macros.id("interval") }}">Select interval:</label>
+            <label class="control-label" for="{{ macros.id("interval") }}">Select interval</label>
             <div class="controls">
                 <select id="{{ macros.id("interval") }}" data-bind="value: {{ macros.settings_binding("interval") }}">
                     <option value="5">5 seconds</option>
@@ -18,7 +18,7 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label" for="{{ macros.id("paused") }}">Pause Prusa Host Ping</label>
+            <label class="control-label" for="{{ macros.id("paused") }}">Pause Prusa host ping</label>
             <div class="controls">
                 <label class="switch">
                     <input type="checkbox" id="{{ macros.id("paused") }}" data-bind="checked: {{ macros.settings_binding("paused") }}">
