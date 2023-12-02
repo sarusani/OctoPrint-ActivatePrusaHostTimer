@@ -3,7 +3,7 @@ layout: plugin
 
 id: ActivatePrusaHostTimer
 title: Activate Prusa HostTimer
-description: Plugin for Octoprint to activate Prusa host features
+description: Plugin for OctoPrint to activate Prusa host features
 author: sarusani
 license: AGPLv3
 
@@ -36,7 +36,7 @@ compatibility:
 
 # Activate Prusa HostTimer
 
-Plugin for Octoprint to activate Prusa host features.
+Plugin for OctoPrint to activate Prusa host features.
 
 #### Features
 - Sends M79 S"OP" to the printer every x seconds
