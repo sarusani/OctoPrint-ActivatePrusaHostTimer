@@ -1,15 +1,17 @@
 # coding=utf-8
 import octoprint.plugin
+import octoprint.util
 
 class ActivatePrusaHostTimerPlugin(
 	octoprint.plugin.SettingsPlugin,
 	octoprint.plugin.AssetPlugin,
-	octoprint.plugin.TemplatePlugin
+	octoprint.plugin.TemplatePlugin,
+	octoprint.plugin.StartupPlugin
 	):
 
 	def get_settings_defaults(self):
 		return {
-			"interval":20000,
+			"interval":20,
 			"paused":0
 		}
 
@@ -35,6 +37,27 @@ class ActivatePrusaHostTimerPlugin(
 				pip="https://github.com/sarusani/OctoPrint-ActivatePrusaHostTimer/archive/{target_version}.zip"
 			)
 		)
+	
+	def sendPing(self):
+		interval = self._settings.get_int(["interval"])	
+		paused = self._settings.get_boolean(["paused"])
+
+		if self._oldInterval != interval:
+			self._loop.cancel()
+			self._loop = octoprint.util.RepeatedTimer(interval, self.sendPing, run_first=False)
+			self._loop.start()
+
+		self._oldInterval = interval
+
+		if not paused:
+			self._printer.commands('M79 S"OP"')
+
+	def on_after_startup(self):
+		interval = self._settings.get_int(["interval"])
+		self._oldInterval = interval
+
+		self._loop = octoprint.util.RepeatedTimer(interval, self.sendPing, run_first=True)
+		self._loop.start()
 
 
 __plugin_name__ = "Activate Prusa HostTimer"
