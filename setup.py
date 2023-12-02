@@ -11,14 +11,14 @@ plugin_package = "octoprint_ActivatePrusaHostTimer"
 
 # The plugin's human readable name. Can be overwritten within OctoPrint's internal data via __plugin_name__ in the
 # plugin module
-plugin_name = "Activate PrusaHost Timer"
+plugin_name = "Activate Prusa HostTimer"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
 plugin_version = "0.2.0"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = "Plugin for Octoprint to activate Prusa host features"
+plugin_description = "OctoPrint plugin to activate Prusa host features."
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "sarusani"

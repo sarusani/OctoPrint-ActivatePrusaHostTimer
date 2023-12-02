@@ -1,11 +1,11 @@
-# Activate PrusaHost Timer
+# Activate Prusa HostTimer
 
-Plugin for OctoPrint to activate Prusa host features.
+OctoPrint plugin to activate Prusa host features.
 
 ### Features
 - Sends M79 S"OP" to the printer every x seconds
 - Interval is configurable (5, 10, 15, 20 or 25 seconds)
-- Interval can be paused
+- Interval ping can be paused
 
 By installing this plugin, the following features (and more) will be available to you as soon as they are released with the newest Prusa firmware.
 
