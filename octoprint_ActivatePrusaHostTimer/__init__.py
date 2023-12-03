@@ -1,6 +1,8 @@
 # coding=utf-8
 import octoprint.plugin
 import octoprint.util
+import os
+import sys
 
 class ActivatePrusaHostTimerPlugin(
 	octoprint.plugin.SettingsPlugin,
@@ -38,13 +40,13 @@ class ActivatePrusaHostTimerPlugin(
 			)
 		)
 	
-	def sendPing(self):
+	def _sendPing(self):
 		interval = self._settings.get_int(["interval"])	
 		paused = self._settings.get_boolean(["paused"])
 		
 		if self._oldInterval != interval:
 			self._loop.cancel()
-			self._loop = octoprint.util.RepeatedTimer(interval, self.sendPing, run_first=False)
+			self._loop = octoprint.util.RepeatedTimer(interval, self._sendPing, run_first=False)
 			self._loop.start()
 			
 			self._oldInterval = interval
@@ -56,8 +58,22 @@ class ActivatePrusaHostTimerPlugin(
 		interval = self._settings.get_int(["interval"])
 		self._oldInterval = interval
 		
-		self._loop = octoprint.util.RepeatedTimer(interval, self.sendPing, run_first=True)
+		self._loop = octoprint.util.RepeatedTimer(interval, self._sendPing, run_first=True)
 		self._loop.start()
+
+	def action_handler(self, comm, line, action, *args, **kwargs):
+		if ";" in action:
+			action = action.split(';')[0]
+			action = action.strip()
+
+		if action == "ready":
+			self._logAction(action)
+			self._printer.start_print()
+		
+		return
+	
+	def _logAction(self, action):
+		self._logger.info("Action intercepted: 'action:%s'" % (action))
 
 
 __plugin_name__ = "Activate Prusa HostTimer"
@@ -69,5 +85,6 @@ def __plugin_load__():
 	
 	global __plugin_hooks__
 	__plugin_hooks__ = {
-		"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
+		"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
+		"octoprint.comm.protocol.action": __plugin_implementation__.action_handler
 	}

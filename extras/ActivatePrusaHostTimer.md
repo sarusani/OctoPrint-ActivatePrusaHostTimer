@@ -42,6 +42,7 @@ OctoPrint plugin to activate Prusa host features.
 - Sends M79 S"OP" to the printer every x seconds
 - Interval is configurable (5, 10, 15, 20 or 25 seconds)
 - Interval ping can be paused
+- Intercept action commands intended for PrusaLink and trigger corresponding OctoPrint features (if available).
 
 Check out the [Homepage](https://github.com/sarusani/OctoPrint-ActivatePrusaHostTimer) to find out more about the use cases and upcoming features this plugin will allow you to use.
 
