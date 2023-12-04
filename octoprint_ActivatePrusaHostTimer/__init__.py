@@ -14,7 +14,8 @@ class ActivatePrusaHostTimerPlugin(
 	def get_settings_defaults(self):
 		return {
 			"interval":20,
-			"paused":0
+			"paused":0,
+			"start_on_ready":1
 		}
 	
 	def get_assets(self):
@@ -63,15 +64,33 @@ class ActivatePrusaHostTimerPlugin(
 
 	def action_handler(self, comm, line, action, *args, **kwargs):
 		if ";" in action:
-			action = action.split(';')[0]
+			action = action.split(";")[0]
 			action = action.strip()
 
-		if action == "ready":
+		if action == "ready" or action == "start":
 			self._logAction(action)
-			self._printer.start_print()
+			if self._settings.get_int(["start_on_ready"]) or action == "start":
+				currentJob = self._printer.get_current_job().get("file").get("name")
+				if currentJob is not None:
+					self._printer.commands("M118 //action:notification Printer is ready. Printing: %s" % (currentJob))
+					self._printer.start_print()
+					return
+				
+				self._printer.commands("M118 //action:notification Printer is ready, but there's no file selected.")
+				return
+			
+			self._printer.commands("M72 S1")
+			self._printer.commands("M118 //action:notification Printer is ready.")
+			return
+
+		if action == "not_ready":
+			self._logAction(action)
+			self._printer.commands("M72 S0")
+			self._printer.commands("M118 //action:notification Printer is not ready to receive print jobs.")
+			return
 		
 		return
-	
+		
 	def _logAction(self, action):
 		self._logger.info("Action intercepted: 'action:%s'" % (action))
 

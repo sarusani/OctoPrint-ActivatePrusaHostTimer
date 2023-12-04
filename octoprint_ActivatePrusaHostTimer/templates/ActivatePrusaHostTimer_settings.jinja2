@@ -18,6 +18,16 @@
         </div>
 
         <div class="control-group">
+            <label class="control-label" for="{{ macros.id("start_on_ready") }}">Start print on "Set Ready"</label>
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="checkbox" id="{{ macros.id("start_on_ready") }}" data-bind="checked: {{ macros.settings_binding("start_on_ready") }}">
+                </label>
+                <em class="help-block">Automatically starts the selected print job when "Set Ready" is selected on the printers LCD menu</em>
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label" for="{{ macros.id("paused") }}">Pause Prusa host ping</label>
             <div class="controls">
                 <label class="switch">
