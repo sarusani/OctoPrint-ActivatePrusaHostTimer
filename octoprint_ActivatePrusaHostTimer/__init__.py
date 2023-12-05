@@ -73,11 +73,14 @@ class ActivatePrusaHostTimerPlugin(
 
 		if action == "ready" or action == "start":
 			self._logAction(action)
+
 			if self._settings.get_int(["start_on_ready"]) or action == "start":
 				currentJob = self._printer.get_current_job().get("file").get("name")
 				if currentJob is not None:
 					self._printer.commands("M118 //action:notification Printer is ready. Printing: %s" % (currentJob))
-					self._printer.start_print()
+					#action:start is covered by octoprint, only show notifications
+					if action != "start":
+						self._printer.start_print()
 					return
 				
 				self._printer.commands("M118 //action:notification Printer is ready, but there's no file selected.")
@@ -89,6 +92,7 @@ class ActivatePrusaHostTimerPlugin(
 
 		if action == "not_ready":
 			self._logAction(action)
+
 			self._printer.commands("M72 S0")
 			self._printer.commands("M118 //action:notification Printer is not ready to receive print jobs.")
 			return
