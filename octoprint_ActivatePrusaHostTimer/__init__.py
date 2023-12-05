@@ -63,6 +63,10 @@ class ActivatePrusaHostTimerPlugin(
 		self._loop.start()
 
 	def action_handler(self, comm, line, action, *args, **kwargs):
+		#Abort if printer is busy or not connected
+		if self._printer.get_state_id() != "OPERATIONAL":
+			return
+		
 		if ";" in action:
 			action = action.split(";")[0]
 			action = action.strip()
