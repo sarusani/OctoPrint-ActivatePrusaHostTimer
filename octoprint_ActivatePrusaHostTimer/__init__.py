@@ -63,10 +63,6 @@ class ActivatePrusaHostTimerPlugin(
 		self._loop.start()
 
 	def action_handler(self, comm, line, action, *args, **kwargs):
-		#Abort if printer is busy or not connected
-		if self._printer.get_state_id() != "OPERATIONAL":
-			return
-		
 		if ";" in action:
 			action = action.split(";")[0]
 			action = action.strip()
@@ -77,9 +73,9 @@ class ActivatePrusaHostTimerPlugin(
 			if self._settings.get_int(["start_on_ready"]) or action == "start":
 				currentJob = self._printer.get_current_job().get("file").get("name")
 				if currentJob is not None:
-					self._printer.commands("M118 //action:notification Printer is ready. Printing: %s" % (currentJob))
-					#action:start is covered by octoprint, only show notifications
-					if action != "start":
+					self._printer.commands("M118 //action:notification Printer is ready. Printing: %s" % currentJob)
+					#Do not try to a start a print if the printer is not OPERATIONAL
+					if self._printer.get_state_id() == "OPERATIONAL":
 						self._printer.start_print()
 					return
 				
@@ -100,7 +96,7 @@ class ActivatePrusaHostTimerPlugin(
 		return
 		
 	def _logAction(self, action):
-		self._logger.info("Action intercepted: 'action:%s'" % (action))
+		self._logger.info("Action intercepted: 'action:%s'" % action)
 
 
 __plugin_name__ = "Activate Prusa HostTimer"
