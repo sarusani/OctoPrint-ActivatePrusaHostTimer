@@ -15,7 +15,8 @@ class ActivatePrusaHostTimerPlugin(
 		return {
 			"interval":20,
 			"paused":0,
-			"start_on_ready":1
+			"start_on_ready":1,
+			"show_notifications":1
 		}
 	
 	def get_assets(self):
@@ -30,13 +31,13 @@ class ActivatePrusaHostTimerPlugin(
 				displayName="Activate Prusa HostTimer",
 				displayVersion=self._plugin_version,
 
-				# version check: github repository
+				#Version check: github repository
 				type="github_release",
 				user="sarusani",
 				repo="OctoPrint-ActivatePrusaHostTimer",
 				current=self._plugin_version,
 
-				# update method: pip
+				#Update method: pip
 				pip="https://github.com/sarusani/OctoPrint-ActivatePrusaHostTimer/archive/{target_version}.zip"
 			)
 		)
@@ -70,32 +71,41 @@ class ActivatePrusaHostTimerPlugin(
 		if action == "ready" or action == "start":
 			self._logAction(action)
 
-			if self._settings.get_int(["start_on_ready"]) or action == "start":
+			if self._settings.get_boolean(["start_on_ready"]) or action == "start":
 				currentJob = self._printer.get_current_job().get("file").get("name")
 				if currentJob is not None:
-					self._printer.commands("M118 //action:notification Printer is ready. Printing: %s" % (currentJob))
-					#Do not try to a start a print if the printer is not OPERATIONAL
-					if self._printer.get_state_id() == "OPERATIONAL":
-						self._logger.info("Starting print of %s" % (currentJob))
-						self._printer.start_print()
+					self._showNotification("Printer is ready. Printing: %s" % (currentJob))
+					self._startPrint(currentJob)
 					return
 				
-				self._printer.commands("M118 //action:notification Printer is ready, but there's no file selected.")
+				self._showNotification("Printer is ready, but there's no file selected.")
 				return
 			
+			#Set printer state "ready"
 			self._printer.commands("M72 S1")
-			self._printer.commands("M118 //action:notification Printer is ready.")
+			self._showNotification("Printer is ready.")
 			return
 
 		if action == "not_ready":
 			self._logAction(action)
 
+			#Set printer state "not ready"
 			self._printer.commands("M72 S0")
-			self._printer.commands("M118 //action:notification Printer is not ready to receive print jobs.")
+			self._showNotification("Printer is not ready to receive print jobs.")
 			return
 		
 		return
+	
+	def _showNotification(self, text):
+		if self._settings.get_boolean(["show_notifications"]):
+			self._printer.commands("M118 //action:notification %s" % (text))
 		
+	def _startPrint(self, currentJob):
+		#Do not try to a start a print if the printer is not OPERATIONAL
+		if self._printer.get_state_id() == "OPERATIONAL":
+			self._logger.info("Starting print of %s" % (currentJob))
+			self._printer.start_print()
+
 	def _logAction(self, action):
 		self._logger.info("Action intercepted: 'action:%s'" % (action))
 

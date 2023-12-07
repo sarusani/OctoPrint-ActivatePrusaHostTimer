@@ -28,6 +28,16 @@
         </div>
 
         <div class="control-group">
+            <label class="control-label" for="{{ macros.id("show_notifications") }}">Show printer notifications</label>
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="checkbox" id="{{ macros.id("show_notifications") }}" data-bind="checked: {{ macros.settings_binding("show_notifications") }}">
+                </label>
+                <em class="help-block">Show printer notificatrions for "Set Ready" and "Reprint"</em>
+            </div>
+        </div>
+        
+        <div class="control-group">
             <label class="control-label" for="{{ macros.id("paused") }}">Pause Prusa host ping</label>
             <div class="controls">
                 <label class="switch">
