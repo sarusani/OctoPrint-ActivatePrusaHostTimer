@@ -4,6 +4,14 @@
     <h5>{{ _('Activate Prusa HostTimer') }}</h5>
     <div class="form-horizontal">
         <div class="control-group">
+            <div class="controls" data-bind="visible: {{ macros.settings_binding("detected_printer_model") }}() != 'mk3s'">
+                <span class="help-inline">
+                    It looks like your printer modell is a <span data-bind="text: {{ macros.settings_binding("detected_printer_model") }}"></span>.<br />
+                    <span class="label label-important">Only Prusa MK3S/+ are supported by this plugin!</span>
+                </span>
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label" for="{{ macros.id("interval") }}">Select interval</label>
             <div class="controls">
                 <select id="{{ macros.id("interval") }}" data-bind="value: {{ macros.settings_binding("interval") }}">
@@ -16,7 +24,6 @@
                 <em class="help-block">A ping is expected at least every 30 seconds</em>
             </div>
         </div>
-
         <div class="control-group">
             <label class="control-label" for="{{ macros.id("start_on_ready") }}">Start print on "Set Ready"</label>
             <div class="controls">
@@ -26,7 +33,6 @@
                 <em class="help-block">Automatically starts the selected print job when "Set Ready" is selected on the printers LCD menu</em>
             </div>
         </div>
-
         <div class="control-group">
             <label class="control-label" for="{{ macros.id("show_notifications") }}">Show printer notifications</label>
             <div class="controls">
@@ -35,8 +41,7 @@
                 </label>
                 <em class="help-block">Show printer notificatrions for "Set Ready" and "Reprint"</em>
             </div>
-        </div>
-        
+        </div>        
         <div class="control-group">
             <label class="control-label" for="{{ macros.id("paused") }}">Pause Prusa host ping</label>
             <div class="controls">
@@ -46,6 +51,6 @@
                 </label>
                 <em class="help-block" data-bind="visible: {{ macros.settings_binding("paused") }}() == '1'">Ping is currently paused</em>
             </div>
-        </div>
+        </div>        
     </div>
 </form>

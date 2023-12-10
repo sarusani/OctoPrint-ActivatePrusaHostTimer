@@ -13,34 +13,89 @@ class ActivatePrusaHostTimerPlugin(
 	
 	def get_settings_defaults(self):
 		return {
-			"interval":20,
-			"paused":0,
-			"start_on_ready":1,
-			"show_notifications":1
+			"detected_printer_model": "",
+			"interval": 20,
+			"paused": 0,
+			"start_on_ready": 1,
+			"show_notifications": 1
 		}
 	
 	def get_assets(self):
-		return dict(
-			js=["js/ActivatePrusaHostTimer.js"],
-			css=["css/ActivatePrusaHostTimer.css"]
-		)
+		return {
+			"js": ["js/ActivatePrusaHostTimer.js"],
+			"css": ["css/ActivatePrusaHostTimer.css"]
+		}
 	
 	def get_update_information(self):
-		return dict(
-			ActivatePrusaHostTimer=dict(
-				displayName="Activate Prusa HostTimer",
-				displayVersion=self._plugin_version,
-
-				#Version check: github repository
-				type="github_release",
-				user="sarusani",
-				repo="OctoPrint-ActivatePrusaHostTimer",
-				current=self._plugin_version,
-
+		return {
+			"ActivatePrusaHostTimer": {
+				"displayName": "Activate Prusa HostTimer",
+				"displayVersion": self._plugin_version,
+				# version check: github repository
+				"type": "github_release",
+				"user": "sarusani",
+				"repo": "OctoPrint-ActivatePrusaHostTimer",
+				"current": self._plugin_version,
+				"stable_branch": {
+					"name": "Stable",
+					"branch": "main",
+					"comittish": ["main"]
+				},
+				"prerelease_branches": [
+					{
+						"name": "Release Candidate",
+						"branch": "release-candidate",
+						"comittish": ["release-candidate", "main"]
+					}
+				],
 				#Update method: pip
-				pip="https://github.com/sarusani/OctoPrint-ActivatePrusaHostTimer/archive/{target_version}.zip"
-			)
-		)
+				"pip": "https://github.com/sarusani/OctoPrint-ActivatePrusaHostTimer/archive/{target_version}.zip"
+			}
+		}
+
+	def on_after_startup(self):
+		#Try to detect printer model automatically if not alrady set
+		self._detectPrinterModelName()
+
+		#Start RepeatedTimer
+		interval = self._settings.get_int(["interval"])	
+		self._oldInterval = interval
+		
+		self._loop = octoprint.util.RepeatedTimer(interval, self._sendPing, run_first=True)
+		self._loop.start()
+
+	def action_handler(self, comm, line, action, *args, **kwargs):
+		if ";" in action:
+			action = action.split(";")[0]
+			action = action.strip()
+		
+		if action == "ready" or action == "start":
+			self._logAction(action)
+
+			if self._settings.get_boolean(["start_on_ready"]) or action == "start":
+				currentJob = self._printer.get_current_job().get("file").get("name")
+				if currentJob is not None:
+					self._showNotification("Printer is ready. Printing: %s" % (currentJob))
+					self._startPrint(currentJob, action)
+					return
+				
+				self._showNotification("Printer is ready, but there's no file selected.")
+				return
+			
+			#Set printer state "ready"
+			self._sendReadyState(1)
+			self._showNotification("Printer is ready.")
+			return
+
+		if action == "not_ready":
+			self._logAction(action)
+
+			#Set printer state "not ready"
+			self._sendReadyState(0)
+			self._showNotification("Printer is not ready to receive print jobs.")
+			return
+		
+		return
 	
 	def _sendPing(self):
 		interval = self._settings.get_int(["interval"])	
@@ -56,53 +111,25 @@ class ActivatePrusaHostTimerPlugin(
 		if not paused:
 			self._printer.commands('M79 S"OP"')
 	
-	def on_after_startup(self):
-		interval = self._settings.get_int(["interval"])
-		self._oldInterval = interval
-		
-		self._loop = octoprint.util.RepeatedTimer(interval, self._sendPing, run_first=True)
-		self._loop.start()
+	def _detectPrinterModelName(self):
+		profileModelName = self._printer_profile_manager.get_current().get("model")
+		printerModel = "mk3s"
+		if profileModelName is not None and not "mk3" in profileModelName.casefold():
+			printerModel = profileModelName
 
-	def action_handler(self, comm, line, action, *args, **kwargs):
-		if ";" in action:
-			action = action.split(";")[0]
-			action = action.strip()
+		self._settings.set(["detected_printer_model"], printerModel)
+		self._settings.save(trigger_event=True)
 
-		if action == "ready" or action == "start":
-			self._logAction(action)
+	def _sendReadyState(self,state):
+		self._printer.commands("M72 S%s" % (state))
 
-			if self._settings.get_boolean(["start_on_ready"]) or action == "start":
-				currentJob = self._printer.get_current_job().get("file").get("name")
-				if currentJob is not None:
-					self._showNotification("Printer is ready. Printing: %s" % (currentJob))
-					self._startPrint(currentJob)
-					return
-				
-				self._showNotification("Printer is ready, but there's no file selected.")
-				return
-			
-			#Set printer state "ready"
-			self._printer.commands("M72 S1")
-			self._showNotification("Printer is ready.")
-			return
-
-		if action == "not_ready":
-			self._logAction(action)
-
-			#Set printer state "not ready"
-			self._printer.commands("M72 S0")
-			self._showNotification("Printer is not ready to receive print jobs.")
-			return
-		
-		return
-	
 	def _showNotification(self, text):
 		if self._settings.get_boolean(["show_notifications"]):
-			self._printer.commands("M118 //action:notification %s" % (text))
-		
-	def _startPrint(self, currentJob):
-		#Do not try to a start a print if the printer is not OPERATIONAL
-		if self._printer.get_state_id() == "OPERATIONAL":
+			self._printer.commands("M118 A1 action:notification %s" % (text))
+	
+	def _startPrint(self, currentJob, action=""):
+		#Do not start a print if the printer is not OPERATIONAL or action:start was the source. (OctoPrint has native support for action:start)
+		if self._printer.get_state_id() == "OPERATIONAL" and action != "start":
 			self._logger.info("Starting print of %s" % (currentJob))
 			self._printer.start_print()
 

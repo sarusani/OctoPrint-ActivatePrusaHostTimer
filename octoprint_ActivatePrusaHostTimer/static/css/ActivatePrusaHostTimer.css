@@ -1,4 +1,10 @@
-.switch {
+#settings_plugin_ActivatePrusaHostTimer .label-important {
+  background-color: #b94a48;
+  color: #cccccc;
+  font-size: 14px;
+}
+
+#settings_plugin_ActivatePrusaHostTimer .switch {
   position: relative;
   display: inline-block;
   width: 40px;
@@ -6,13 +12,13 @@
   margin-top: 5px;
 }
 
-.switch input {
+#settings_plugin_ActivatePrusaHostTimer .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+#settings_plugin_ActivatePrusaHostTimer .slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -24,7 +30,7 @@
   transition: .4s;
 }
 
-.slider:before {
+#settings_plugin_ActivatePrusaHostTimer .slider:before {
   position: absolute;
   content: "";
   height: 16px;
@@ -36,24 +42,24 @@
   transition: .4s;
 }
 
-input:checked + .slider {
+#settings_plugin_ActivatePrusaHostTimer input:checked + .slider {
   background-color: #2196F3;
 }
 
-input:focus + .slider {
+#settings_plugin_ActivatePrusaHostTimer input:focus + .slider {
   box-shadow: 0 0 1px #2196F3;
 }
 
-input:checked + .slider:before {
+#settings_plugin_ActivatePrusaHostTimer input:checked + .slider:before {
   -webkit-transform: translateX(16px);
   -ms-transform: translateX(16px);
   transform: translateX(16px);
 }
 
-.slider.round {
+#settings_plugin_ActivatePrusaHostTimer .slider.round {
   border-radius: 24px;
 }
 
-.slider.round:before {
+#settings_plugin_ActivatePrusaHostTimer .slider.round:before {
   border-radius: 50%;
 }
