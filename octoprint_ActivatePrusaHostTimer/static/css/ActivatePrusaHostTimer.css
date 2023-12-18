@@ -2,6 +2,7 @@
   background-color: #b94a48;
   color: #cccccc;
   font-size: 14px;
+  white-space: normal;
 }
 
 #settings_plugin_ActivatePrusaHostTimer .switch {

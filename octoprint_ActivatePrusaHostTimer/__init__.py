@@ -112,9 +112,14 @@ class ActivatePrusaHostTimerPlugin(
 			self._printer.commands('M79 S"OP"')
 	
 	def _detectPrinterModelName(self):
-		profileModelName = self._printer_profile_manager.get_current().get("model")
+		profileModelName = "unknown"
 		printerModel = "mk3s"
-		if profileModelName is not None and not "mk3" in profileModelName.casefold():
+		printerProfile =  self._printer_profile_manager.get_current_or_default()
+		
+		if printerProfile is not None and printerProfile.get("model") != "":
+			profileModelName = printerProfile.get("model")
+		
+		if not "mk3" in profileModelName.casefold():
 			printerModel = profileModelName
 
 		self._settings.set(["detected_printer_model"], printerModel)

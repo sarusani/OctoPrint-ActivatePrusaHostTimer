@@ -6,8 +6,8 @@
         <div class="control-group">
             <div class="controls" data-bind="visible: {{ macros.settings_binding("detected_printer_model") }}() != 'mk3s'">
                 <span class="help-inline">
-                    It looks like your printer modell is a <span data-bind="text: {{ macros.settings_binding("detected_printer_model") }}"></span>.<br />
-                    <span class="label label-important">Only Prusa MK3S/+ are supported by this plugin!</span>
+                    It looks like your printer modell is <span data-bind="text: {{ macros.settings_binding("detected_printer_model") }}"></span>.<br />
+                    <span class="label label-important">Please note that only Prusa MK3S/+ printers are supported by this plugin!</span>
                 </span>
             </div>
         </div>
