@@ -93,6 +93,24 @@ class ActivatePrusaHostTimerPlugin(
 			self._sendReadyState(0)
 			self._showNotification("Printer is not ready to receive print jobs.")
 			return
+		
+		if action == "sd_inserted":
+			self._logAction(action)
+
+			self._showNotification("SD Card inserted.")
+			return
+
+		if action == "sd_ejected":
+			self._logAction(action)
+
+			self._showNotification("SD Card removed.")
+			return
+
+		if action == "sd_updated":
+			self._logAction(action)
+
+			self._showNotification("SD Card content updated.")
+			return
 	
 	def _sendPing(self):
 		interval = self._settings.get_int(["interval"])	
