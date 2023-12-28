@@ -31,7 +31,7 @@ class ActivatePrusaHostTimerPlugin(
 			"ActivatePrusaHostTimer": {
 				"displayName": "Activate Prusa HostTimer",
 				"displayVersion": self._plugin_version,
-				# version check: github repository
+				#Version check: github repository
 				"type": "github_release",
 				"user": "sarusani",
 				"repo": "OctoPrint-ActivatePrusaHostTimer",
@@ -54,7 +54,7 @@ class ActivatePrusaHostTimerPlugin(
 		}
 
 	def on_after_startup(self):
-		#Try to detect printer model automatically if not alrady set
+		#Try to detect printer model automatically if not already set
 		self._detectPrinterModelName()
 
 		#Start RepeatedTimer
@@ -69,14 +69,13 @@ class ActivatePrusaHostTimerPlugin(
 			action = action.split(";")[0]
 			action = action.strip()
 		
-		if action == "ready" or action == "start":
+		if action == "ready":
 			self._logAction(action)
 
-			if self._settings.get_boolean(["start_on_ready"]) or action == "start":
-				currentJob = self._printer.get_current_job().get("file").get("name")
-				if currentJob is not None:
-					self._showNotification("Printer is ready. Printing: %s" % (currentJob))
-					self._startPrint(currentJob, action)
+			if self._settings.get_boolean(["start_on_ready"]):
+				currentJobName = self._printer.get_current_job().get("file").get("name")
+				if currentJobName is not None:
+					self._startPrint(currentJobName)
 					return
 				
 				self._showNotification("Printer is ready, but there's no file selected.")
@@ -94,8 +93,6 @@ class ActivatePrusaHostTimerPlugin(
 			self._sendReadyState(0)
 			self._showNotification("Printer is not ready to receive print jobs.")
 			return
-		
-		return
 	
 	def _sendPing(self):
 		interval = self._settings.get_int(["interval"])	
@@ -130,13 +127,23 @@ class ActivatePrusaHostTimerPlugin(
 
 	def _showNotification(self, text):
 		if self._settings.get_boolean(["show_notifications"]):
+			text = text[:64]+"..." if len(text) > 67 else text #Cut string, OctoPrint won't show more than 67 characters.
 			self._printer.commands("M118 A1 action:notification %s" % (text))
-	
-	def _startPrint(self, currentJob, action=""):
-		#Do not start a print if the printer is not OPERATIONAL or action:start was the source. (OctoPrint has native support for action:start)
-		if self._printer.get_state_id() == "OPERATIONAL" and action != "start":
-			self._logger.info("Starting print of %s" % (currentJob))
-			self._printer.start_print()
+
+	def _showLCDNotification(self, text):
+		if self._settings.get_boolean(["show_notifications"]):
+			self._printer.commands("M117 %s" % (text)[:20]) #Cut string, LCD can't show more than 20 characters.
+
+	def _startPrint(self, currentJobName):
+		#Do not show a notification or start a print if the printer is not ready.
+		if self._printer.is_ready():
+			self._showNotification("Printer is ready. Printing: %s" % (currentJobName))
+			self._showLCDNotification("File:%s" % (currentJobName))
+			
+			#Make sure state didn't change while sending messages
+			if self._printer.is_ready():
+				self._logger.info("Starting print of: %s" % (currentJobName))
+				self._printer.start_print()
 
 	def _logAction(self, action):
 		self._logger.info("Action intercepted: 'action:%s'" % (action))
