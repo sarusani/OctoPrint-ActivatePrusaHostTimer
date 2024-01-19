@@ -1,3 +1,7 @@
+#settings_plugin_ActivatePrusaHostTimer h4:first-child {
+  margin-top: 0;
+}
+
 #settings_plugin_ActivatePrusaHostTimer .label-important {
   background-color: #b94a48;
   color: #cccccc;
