@@ -156,7 +156,9 @@ class ActivatePrusaHostTimerPlugin(
 		#Do not show a notification or start a print if the printer is not ready.
 		if self._printer.is_ready():
 			self._showNotification("Printer is ready. Printing: %s" % (currentJobName))
-			self._showLCDNotification("File:%s" % (currentJobName))
+			#Remove all whitespaces from string if longer than 20 characters.
+			lcdMessage = currentJobName if len(currentJobName) <= 20 else ''.join(currentJobName.split())
+			self._showLCDNotification("File:%s" % (lcdMessage))
 			
 			#Make sure state didn't change while sending messages
 			if self._printer.is_ready():
