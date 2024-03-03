@@ -12,46 +12,57 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="{{ macros.id("interval") }}">Select interval</label>
-        <div class="controls">
-            <select id="{{ macros.id("interval") }}" data-bind="value: {{ macros.settings_binding("interval") }}">
-                <option value="5">5 seconds</option>
-                <option value="10">10 seconds</option>
-                <option value="15">15 seconds</option>
-                <option value="20">20 seconds</option>
-                <option value="25">25 seconds</option>
-            </select>
-            <em class="help-block">A ping is expected at least every 30 seconds</em>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ macros.id("paused") }}">Pause Prusa host ping</label>
+        <label class="control-label" for="{{ macros.id("ping_activated") }}">Activate Prusa host ping</label>
         <div class="controls">
             <label class="switch">
-                <input type="checkbox" id="{{ macros.id("paused") }}" data-bind="checked: {{ macros.settings_binding("paused") }}">
+                <input type="checkbox" id="{{ macros.id("ping_activated") }}" data-bind="checked: {{ macros.settings_binding("ping_activated") }}">
                 <span class="slider round"></span>
             </label>
-            <em class="help-block" data-bind="visible: {{ macros.settings_binding("paused") }}() == '1'">Ping is currently paused</em>
+            <em class="help-block" data-bind="visible: {{ macros.settings_binding("ping_activated") }}() == '0'">Ping is currently paused</em>
         </div>
     </div>
-    <br/>
-    <h5>Additional Settings</h5>
-    <div class="control-group">
-        <label class="control-label" for="{{ macros.id("start_on_ready") }}">Start print on "Set Ready"</label>
-        <div class="controls">
-            <label class="checkbox">
-                <input type="checkbox" id="{{ macros.id("start_on_ready") }}" data-bind="checked: {{ macros.settings_binding("start_on_ready") }}">
-            </label>
-            <em class="help-block">Automatically starts the selected print job when "Set Ready" is selected on the printers LCD menu</em>
+    <div data-bind="visible: {{ macros.settings_binding("ping_activated") }}">
+        <div class="control-group">
+            <label class="control-label" for="{{ macros.id("ping_interval") }}">Select interval</label>
+            <div class="controls">
+                <select id="{{ macros.id("ping_interval") }}" data-bind="value: {{ macros.settings_binding("ping_interval") }}">
+                    <option value="5">5 seconds</option>
+                    <option value="10">10 seconds</option>
+                    <option value="15">15 seconds</option>
+                    <option value="20">20 seconds</option>
+                    <option value="25">25 seconds</option>
+                </select>
+                <em class="help-block">A ping is expected at least every 30 seconds</em>
+            </div>
         </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ macros.id("show_notifications") }}">Show printer notifications</label>
-        <div class="controls">
-            <label class="checkbox">
-                <input type="checkbox" id="{{ macros.id("show_notifications") }}" data-bind="checked: {{ macros.settings_binding("show_notifications") }}">
-            </label>
-            <em class="help-block">Show printer notifications for "Set Ready" / "Set not Ready"</em>
+        <br/>
+        <h5>Notification Settings</h5>
+        <div class="control-group">
+            <label class="control-label" for="{{ macros.id("show_notifications") }}">Show Notifications</label>
+            <div class="controls">
+                <label class="switch">
+                    <input type="checkbox" id="{{ macros.id("show_notifications") }}" data-bind="checked: {{ macros.settings_binding("show_notifications") }}">
+                    <span class="slider round"></span>
+                </label>
+                <em class="help-block" data-bind="visible: {{ macros.settings_binding("show_notifications") }}() == '0'">Notifications are disabled</em>
+            </div>
+            <div class="controls" data-bind="visible: {{ macros.settings_binding("show_notifications") }}">
+                <label class="checkbox">
+                    <input type="checkbox" id="{{ macros.id("show_state_notifications") }}" data-bind="checked: {{ macros.settings_binding("show_state_notifications") }}">
+                    <em class="help-block">Show "Set Ready" notifications</em>
+                </label>
+            </div>
+        </div>
+        <br/>
+        <h5>Additional Settings</h5>
+        <div class="control-group">
+            <label class="control-label" for="{{ macros.id("start_on_ready") }}">Start print on "Set Ready"</label>
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="checkbox" id="{{ macros.id("start_on_ready") }}" data-bind="checked: {{ macros.settings_binding("start_on_ready") }}">
+                    <em class="help-block">Automatically starts the selected print job when "Set Ready" is selected on the printers LCD menu</em>
+                </label>
+            </div>
         </div>
     </div>
 </form>
