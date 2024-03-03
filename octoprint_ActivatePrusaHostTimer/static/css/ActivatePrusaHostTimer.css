@@ -68,3 +68,8 @@
 #settings_plugin_ActivatePrusaHostTimer .slider.round:before {
   border-radius: 50%;
 }
+
+#settings_plugin_ActivatePrusaHostTimer label.checkbox,
+#settings_plugin_ActivatePrusaHostTimer .help-block {
+  margin-top: 0;
+}

@@ -14,10 +14,12 @@ class ActivatePrusaHostTimerPlugin(
 	def get_settings_defaults(self):
 		return {
 			"detected_printer_model": "",
-			"interval": 20,
-			"paused": 0,
+			"ping_interval": 20,
+			"ping_activated": 1,
 			"start_on_ready": 1,
-			"show_notifications": 1
+			"show_notifications": 1,
+			"show_state_notifications": 1,
+			"show_sdcard_notifications": 1
 		}
 	
 	def get_assets(self):
@@ -58,7 +60,7 @@ class ActivatePrusaHostTimerPlugin(
 		self._detectPrinterModelName()
 
 		#Start RepeatedTimer
-		interval = self._settings.get_int(["interval"])	
+		interval = self._settings.get_int(["ping_interval"])	
 		self._oldInterval = interval
 		
 		self._loop = octoprint.util.RepeatedTimer(interval, self._sendPing, run_first=True)
@@ -83,7 +85,7 @@ class ActivatePrusaHostTimerPlugin(
 			
 			#Set printer state "ready"
 			self._sendReadyState(1)
-			self._showNotification("Printer is ready.")
+			self._showNotification("Printer is ready.", "state")
 			return
 
 		if action == "not_ready":
@@ -91,30 +93,30 @@ class ActivatePrusaHostTimerPlugin(
 
 			#Set printer state "not ready"
 			self._sendReadyState(0)
-			self._showNotification("Printer is not ready to receive print jobs.")
+			self._showNotification("Printer is not ready to receive print jobs.", "state")
 			return
 		
 		if action == "sd_inserted":
 			self._logAction(action)
 
-			self._showNotification("SD Card inserted.")
+			self._showNotification("SD Card inserted.", "sdcard")
 			return
 
 		if action == "sd_ejected":
 			self._logAction(action)
 
-			self._showNotification("SD Card removed.")
+			self._showNotification("SD Card removed.", "sdcard")
 			return
 
 		if action == "sd_updated":
 			self._logAction(action)
 
-			self._showNotification("SD Card content updated.")
+			self._showNotification("SD Card content updated.", "sdcard")
 			return
 	
 	def _sendPing(self):
-		interval = self._settings.get_int(["interval"])	
-		paused = self._settings.get_boolean(["paused"])
+		interval = self._settings.get_int(["ping_interval"])	
+		activated = self._settings.get_boolean(["ping_activated"])
 		
 		if self._oldInterval != interval:
 			self._loop.cancel()
@@ -123,7 +125,7 @@ class ActivatePrusaHostTimerPlugin(
 			
 			self._oldInterval = interval
 		
-		if not paused:
+		if activated:
 			self._printer.commands('M79 S"OP"')
 	
 	def _detectPrinterModelName(self):
@@ -143,8 +145,13 @@ class ActivatePrusaHostTimerPlugin(
 	def _sendReadyState(self,state):
 		self._printer.commands("M72 S%s" % (state))
 
-	def _showNotification(self, text):
+	def _showNotification(self, text, type="generic"):
 		if self._settings.get_boolean(["show_notifications"]):
+			if (type == "state" and not self._settings.get_boolean(["show_state_notifications"])):
+				return
+			elif (type == "sdcard" and not self._settings.get_boolean(["show_sdcard_notifications"])):
+				return
+			
 			text = text[:64]+"..." if len(text) > 67 else text #Cut string, OctoPrint won't show more than 67 characters.
 			self._printer.commands("M118 A1 action:notification %s" % (text))
 
