@@ -12,6 +12,10 @@ Supported printer models:<br />
 [MK3S/+](https://github.com/prusa3d/Prusa-Firmware/releases) (Firmware 3.14.0 and newer)
 
 ### Examples
+#### Resume print 
+Enables the Resume print menu entry on the printer LCD if a host print was paused.<br />
+(The "Resume print" menu entry is only visible while the plugin is active.)
+
 #### Reprint
 Use the "Reprint" menu item on the printer to trigger a reprint of the last print job directly from the printer without going back to OctoPrint.<br />
 (The "Reprint" menu entry is only visible while the plugin is active.)
