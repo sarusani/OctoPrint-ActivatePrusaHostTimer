@@ -94,6 +94,15 @@ class ActivatePrusaHostTimerPlugin(
 			self._sendReadyState(0)
 			self._showNotification("Printer is not ready to receive print jobs.", "state")
 			return
+		
+		if action == "start":
+			self._logAction(action)
+
+			currentJobName = self._printer.get_current_job().get("file").get("name")
+			if currentJobName is None:
+				self._showNotification("Printer is ready, but there's no file selected.")
+			return
+			
 	
 	def _sendPing(self):
 		interval = self._settings.get_int(["ping_interval"])	
