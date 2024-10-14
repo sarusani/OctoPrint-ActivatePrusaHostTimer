@@ -9,7 +9,7 @@ OctoPrint plugin to activate Prusa host features.
 - Printer notifications for "Set Ready" and "Set not Ready"
 
 Supported printer models:<br />
-[MK3S/+](https://github.com/prusa3d/Prusa-Firmware/releases) (Firmware 3.14.0 and newer)
+[MK2.5/S and MK3/S/+](https://github.com/prusa3d/Prusa-Firmware/releases) (Firmware 3.14.0 and newer)
 
 ### Examples
 #### Resume print 
